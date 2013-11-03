@@ -3,8 +3,18 @@
     "description": "A simple table-builder library",
     "homepage": "https://ditt.to/",
     "minimum-stability": "dev",
-    "type": "library",
+    "type": "symfony-bundle",
     "require": {
-        "php": ">=5.2.4"
+        "php": ">=5.3.2"
     },
+    "autoload": {
+        "psr-0": { "Dittto\\TableBundle": "" }
+    },
+    "target-dir": "Dittto/TableBundle",
+    "authors": [
+        {
+            "name": "Nick Stacey",
+            "email": "nick@ditt.to"
+        }
+    ]
 }

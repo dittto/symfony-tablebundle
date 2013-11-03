@@ -27,25 +27,25 @@ exception. This is because the table needs to be created with various settings a
 classes. Below is a simple example of how to extend it for a news entity:
 
     namespace A\DifferentBundle\Table;
-
-    use Dittto\TableBundle\Table\Table;
+    
+    use Dittto\TableBundle\Table\EntityBridge;
     use Doctrine\ORM\EntityRepository;
-
+    
     /**
-     * Class NewsTable
-     * The table for the news list
+     * Class NewsBridge
+     * A bridge for the news entities
      *
      * @package A\DifferentBundle\Table
      */
-    class NewsTable extends Table
+    class NewsBridge extends EntityBridge
     {
         /**
          * {@inheritDoc}
          */
-        public function __construct(EntityRepository $repository, $order = null, $direction = 'asc', $page = 1, $perPage = 10)
+        public function __construct(EntityRepository $repository)
         {
             // setup the parent as normal
-            parent::__construct($repository, $order, $direction, $page, $perPage);
+            parent::__construct($repository);
 
             // set the table alias
             $this->setAlias('a');
@@ -58,7 +58,6 @@ classes. Below is a simple example of how to extend it for a news entity:
             ));
         }
     }
-
 
 Now you have your own Table class, you need to instantiate a render for it, set the routes the renderer is allowed
 to use, and use this renderer to create the html for the table:
@@ -86,12 +85,12 @@ to use, and use this renderer to create the html for the table:
                 'edit' => 'news_edit',
                 'delete' => 'news_delete',
             ));
+ 
+            // set up the bridge for the news table and create the news table
+            $bridge = new NewsBridge($this->getDoctrine()->getRepository('ADifferentBundle:News'));
+            $table = new Table($bridge);
 
-            // create and render the news table
-            $table = new NewsTable($this->getDoctrine()->getRepository('ADifferentBundle:News'));
-            $tableCode = $table->createTable($renderer);
-
-            return $this->render('ADifferentBundle:News:list.html.twig', array('table' => $tableCode));
+            return $this->render('ADifferentBundle:News:list.html.twig', array('table' => $table->createTable($renderer)));
         }
     }
 
