@@ -1,0 +1,10 @@
+{
+    "name": "dittto/tablebundle",
+    "description": "A simple table-builder library",
+    "homepage": "https://ditt.to/",
+    "minimum-stability": "dev",
+    "type": "library",
+    "require": {
+        "php": ">=5.2.4"
+    },
+}

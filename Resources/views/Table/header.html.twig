@@ -1,0 +1,5 @@
+<thead>
+{% for field, options in fields %}
+    <th>{% if attribute(options, "name") %}{{ options.name }}{% else %}{{ field }}{% endif %}</th>
+{% endfor %}
+</thead>

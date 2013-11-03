@@ -1,0 +1,9 @@
+<tr>
+    {% for field, options in fields %}
+        <td>
+            {{ attribute(data, options.fieldAlias) }}
+        </td>
+    {% endfor %}
+
+    {{ rowActions|raw }}
+</tr>
