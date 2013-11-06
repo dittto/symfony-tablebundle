@@ -26,7 +26,7 @@ interface BridgeInterface
     public function getFields();
 
     /**
-     * These bridge assume that there is some object that takes the options supplied and builds a search and ordering
+     * The bridge assumes that there is some object that takes the options supplied and builds a search and ordering
      * around it
      *
      * @return void
@@ -55,8 +55,6 @@ interface BridgeInterface
      *
      * @param int $page The page number requested by the browser
      * @param int $perPage The number of items per page to return by the browser
-     * @return array An array containing the total number of items, the page number, the number of items per page, and
-     * the total number of pages
      */
     public function setPaginationChanges($page, $perPage);
 
@@ -66,4 +64,11 @@ interface BridgeInterface
      * @return array
      */
     public function getData();
+
+    /**
+     * Gets the count of the data from the bridge
+     *
+     * @return int
+     */
+    public function getCount();
 }

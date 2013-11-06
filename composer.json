@@ -1,7 +1,7 @@
 {
     "name": "dittto/tablebundle",
     "description": "A simple table-builder library",
-    "homepage": "https://ditt.to/",
+    "homepage": "http://ditt.to/",
     "minimum-stability": "dev",
     "type": "symfony-bundle",
     "require": {
