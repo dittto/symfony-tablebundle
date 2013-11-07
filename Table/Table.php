@@ -154,7 +154,7 @@ class Table
         $total = $bridge->getCount();
 
         // calculate the page values
-        $perPage = $perPage > 1 && $perPage < 1000 ? $perPage : 1;
+        $perPage = $perPage > 1 && $perPage < 1000 ? $perPage : 10;
         $maxPage = ceil($total / $perPage);
         $page = $page > 1 && $page < $maxPage ? $page : 1;
 

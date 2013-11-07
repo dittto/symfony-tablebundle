@@ -15,7 +15,7 @@ abstract class Bridge implements BridgeInterface
      * of the data, or whether a field can be ordered
      * @var array
      */
-    private $fields;
+    private $fields = array();
 
     /**
      * Stores the fields for the table. These need to be stored as they can be altered by the bridge interface

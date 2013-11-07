@@ -41,50 +41,69 @@ class EntityBridge extends Bridge
     }
 
     /**
-     * Change the alias of the table in the sql code
+     * Returns the alias set for this table
+     *
+     * @return string
+     */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * Change the alias of the table in the sql code. After you've called this, run setFields
+     * as it relies on the latest alias
      *
      * @param string $alias The alias of the table
      */
     public function setAlias($alias)
     {
-        $this->alias = $alias;
+        $this->alias = (string)$alias;
     }
 
     /**
-     * Creates the query builder for the repository
+     * Override the setFields method so we can update the fields
      *
-     * @return null|void
+     * {@inheritDoc}
      */
-    public function createQueryBuilder()
-    {
-        // get the query builder from the repository
-        $this->queryBuilder = $this->repository->createQueryBuilder($this->alias);
-    }
-
-    /**
-     * Sets any additional changes that may need to occur on the entity repository and the fields listings
-     *
-     * @return null|void
-     */
-    public function setAdditionalChanges()
+    public function setFields(array $fields)
     {
         // init vars
-        $fields = $this->getFields();
         $alias = $this->alias;
 
         // update any fields values that are missing
         foreach ($fields as $field => $options) {
             $fields[$field]['alias'] = isset($options['alias']) ? $options['alias'] : $alias;
             $fields[$field]['order'] = isset($options['order']) ? $options['order'] : false;
-            $fields[$field]['name'] = isset($options['name']) ? $options['name'] : ucwords(strtolower($field));
+            $fields[$field]['name'] = isset($options['name']) ? $options['name'] : ucfirst(strtolower(str_replace('_', ' ', $field)));
             $fields[$field]['autoAdd'] = isset($options['autoAdd']) ? $options['autoAdd'] : true;
             $fields[$field]['fieldAlias'] = isset($options['fieldAlias']) && $options['fieldAlias'] ? $options['fieldAlias'] : 'field_'.$field;
         }
 
-        // update the fields values with missing values
-        $this->setFields($fields);
+        // update using the parent method
+        parent::setFields($fields);
+    }
 
-        // get any extra query changes
+    /**
+     * Creates the query builder for the repository
+     *
+     * @return boolean True if the query builder has been loaded correctly
+     */
+    public function createQueryBuilder()
+    {
+        // get the query builder from the repository
+        $this->queryBuilder = $this->repository->createQueryBuilder($this->alias);
+
+        return $this->queryBuilder ? true : false;
+    }
+
+    /**
+     * Sets any additional changes that may need to occur on the entity repository
+     *
+     * @return null|void
+     */
+    public function setAdditionalChanges()
+    {
         $this->setExtraQueryChanges($this->queryBuilder);
     }
 
@@ -93,7 +112,7 @@ class EntityBridge extends Bridge
      *
      * @param string $order The name of the field to order by
      * @param string $direction Either asc or desc
-     * @return void
+     * @return array An array containing the order and direction
      */
     public function setOrderingChanges($order, $direction)
     {
@@ -105,6 +124,7 @@ class EntityBridge extends Bridge
         // make sure we are ordering by the correct field
         foreach ($this->getFields() as $field => $options) {
             if (isset($options['order'])) {
+                // checks for either a matching field or a missing field name and the default field
                 if (($order === $field && $options['order'] !== false) || (!$order && in_array($options['order'], $directions))) {
                     $orderField = $options['alias'].'.'.$field;
                     $directionString = in_array($direction, $directions) ? $direction : ($options['order'] !== true ? $options['order'] : 'asc');
@@ -116,6 +136,8 @@ class EntityBridge extends Bridge
         if ($orderField !== '' && $directionString !== '') {
             $this->queryBuilder->orderBy($orderField, $directionString);
         }
+
+        return array('order' => $orderField, 'direction' => $directionString);
     }
 
     /**
@@ -124,12 +146,15 @@ class EntityBridge extends Bridge
      *
      * @param int $page The page number requested by the browser
      * @param int $perPage The number of items per page to return by the browser
+     * @return array An array containing the offset and the limit
      */
     public function setPaginationChanges($page, $perPage)
     {
         // update the query builder
         $this->queryBuilder->setFirstResult($perPage * ($page - 1));
         $this->queryBuilder->setMaxResults($perPage);
+
+        return array('offset' => $perPage * ($page - 1), 'limit' => $perPage);
     }
 
     /**
