@@ -118,28 +118,40 @@ class EntityBridge extends Bridge
     {
         // init vars
         $directions = array('asc', 'desc');
-        $orderField = '';
-        $aliasedOrderField = '';
-        $directionString = '';
+        $matchedField = '';
 
         // make sure we are ordering by the correct field
-        foreach ($this->getFields() as $field => $options) {
-            if (isset($options['order'])) {
-                // checks for either a matching field or a missing field name and the default field
-                if (($order === $field && $options['order'] !== false) || (!$order && in_array($options['order'], $directions))) {
-                    $orderField = $field;
-                    $aliasedOrderField = $options['alias'].'.'.$field;
-                    $directionString = in_array($direction, $directions) ? $direction : ($options['order'] !== true ? $options['order'] : 'asc');
-                }
+        $defaultField = array();
+        $fields = $this->getFields();
+        foreach ($fields as $field => $options) {
+
+            // store the default field incase on other field is matched
+            if (in_array($options['order'], $directions)) {
+                $defaultField = $field;
+            }
+
+            // checks for either a matching field
+            if (isset($options['order']) && $order === $field && $options['order'] !== false) {
+                $matchedField = $field;
             }
         }
 
-        // add the order to the query builder
-        if ($aliasedOrderField !== '' && $directionString !== '') {
-            $this->queryBuilder->orderBy($aliasedOrderField, $directionString);
+        // if no field was matched, use the default field
+        if (!$matchedField) {
+            $matchedField = $defaultField;
         }
 
-        return array('order' => $orderField, 'direction' => $directionString);
+        // get the data based on the field name
+        $options = $fields[$matchedField];
+        $aliasedField = $options['alias'].'.'.$matchedField;
+        $directionString = in_array($direction, $directions) ? $direction : ($options['order'] !== true ? $options['order'] : 'asc');
+
+        // add the order to the query builder
+        if ($aliasedField !== '' && $directionString !== '') {
+            $this->queryBuilder->orderBy($aliasedField, $directionString);
+        }
+
+        return array('order' => $matchedField, 'direction' => $directionString);
     }
 
     /**
