@@ -93,6 +93,9 @@ class Table
         // get the name for the translation files
         $translationName = $this->getTranslationName();
 
+        // update the ordering in the renderer
+        $renderer->setOrdering($this->order, $this->direction);
+
         // render template and return
         return $renderer->render($translationName, $this->bridge->getFields(), $data, $pagination);
     }
@@ -112,7 +115,9 @@ class Table
         $this->bridge->setAdditionalChanges();
 
         // apply the ordering from the query
-        $this->bridge->setOrderingChanges($this->order, $this->direction);
+        $ordering = $this->bridge->setOrderingChanges($this->order, $this->direction);
+        $this->order = $ordering['order'];
+        $this->direction = $ordering['direction'];
 
         // apply the pagination
         $pagination = $this->calculatePagination($this->bridge, $this->page, $this->perPage);
@@ -156,7 +161,7 @@ class Table
         // calculate the page values
         $perPage = $perPage > 1 && $perPage < 1000 ? $perPage : 10;
         $maxPage = ceil($total / $perPage);
-        $page = $page > 1 && $page < $maxPage ? $page : 1;
+        $page = $page > 1 && $page <= $maxPage ? $page : 1;
 
         // update the query builder
         $bridge->setPaginationChanges($page, $perPage);

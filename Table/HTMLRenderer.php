@@ -68,6 +68,18 @@ class HTMLRenderer
     private $routes = array();
 
     /**
+     * A list of extra options to pass to the templates
+     * @var array
+     */
+    private $options = array();
+
+    /**
+     * The list of ordering options, containing the order field, direction, page, and per page options
+     * @var array
+     */
+    private $ordering = array();
+
+    /**
      * Class constructor
      *
      * @param EngineInterface $engine The engine engine used to create the html
@@ -181,6 +193,28 @@ class HTMLRenderer
     }
 
     /**
+     * Stores the options for all view templates
+     *
+     * @param array $options The options to store
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+    }
+
+    /**
+     * Stores the ordering options
+     *
+     * @param string $order The order field to order the data by
+     * @param string $direction Either asc or desc
+     */
+    public function setOrdering($order, $direction)
+    {
+        $this->ordering['order'] = $order;
+        $this->ordering['direction'] = $direction;
+    }
+
+    /**
      * Handles the rendering of the table as a whole, rendering each individual section and returning the completed
      * html
      *
@@ -206,7 +240,10 @@ class HTMLRenderer
                 $rowActionsCode = $this->engine->render($this->rowActionsTemplate, array(
                     'data' => $row,
                     'routes' => $this->routes,
-                    'translationName' => $translationName));
+                    'translationName' => $translationName,
+                    'pagination' => $pagination,
+                    'options' => $this->options,
+                    'ordering' => $this->ordering));
             }
 
             // create the row
@@ -216,7 +253,10 @@ class HTMLRenderer
                 'count' => $count,
                 'rowActions' => $rowActionsCode,
                 'routes' => $this->routes,
-                'translationName' => $translationName));
+                'translationName' => $translationName,
+                'pagination' => $pagination,
+                'options' => $this->options,
+                'ordering' => $this->ordering));
         }
 
         // create the sections of the table
@@ -225,21 +265,29 @@ class HTMLRenderer
             'pagination' => $pagination,
             'hasRowActions' => $this->hasRowActions(),
             'routes' => $this->routes,
-            'translationName' => $translationName));
+            'translationName' => $translationName,
+            'options' => $this->options,
+            'ordering' => $this->ordering));
         $bodyCode = $this->engine->render($this->bodyTemplate, array(
             'rows' => $rowCode,
             'pagination' => $pagination,
             'routes' => $this->routes,
-            'translationName' => $translationName));
+            'translationName' => $translationName,
+            'options' => $this->options,
+            'ordering' => $this->ordering));
         $footerCode = $this->engine->render($this->footerTemplate, array(
             'pagination' => $pagination,
             'numRows' => $numRows,
             'routes' => $this->routes,
-            'translationName' => $translationName));
+            'translationName' => $translationName,
+            'options' => $this->options,
+            'ordering' => $this->ordering));
         $paginationCode = $this->engine->render($this->paginationTemplate, array(
             'pagination' => $pagination,
             'routes' => $this->routes,
-            'translationName' => $translationName));
+            'translationName' => $translationName,
+            'options' => $this->options,
+            'ordering' => $this->ordering));
 
         // create the table
         $code = $this->engine->render($this->tableTemplate, array(
@@ -248,7 +296,9 @@ class HTMLRenderer
             'footer' => $footerCode,
             'pagination' => $paginationCode,
             'routes' => $this->routes,
-            'translationName' => $translationName));
+            'translationName' => $translationName,
+            'options' => $this->options,
+            'ordering' => $this->ordering));
 
         return $code;
     }

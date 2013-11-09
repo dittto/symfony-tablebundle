@@ -119,6 +119,7 @@ class EntityBridge extends Bridge
         // init vars
         $directions = array('asc', 'desc');
         $orderField = '';
+        $aliasedOrderField = '';
         $directionString = '';
 
         // make sure we are ordering by the correct field
@@ -126,15 +127,16 @@ class EntityBridge extends Bridge
             if (isset($options['order'])) {
                 // checks for either a matching field or a missing field name and the default field
                 if (($order === $field && $options['order'] !== false) || (!$order && in_array($options['order'], $directions))) {
-                    $orderField = $options['alias'].'.'.$field;
+                    $orderField = $field;
+                    $aliasedOrderField = $options['alias'].'.'.$field;
                     $directionString = in_array($direction, $directions) ? $direction : ($options['order'] !== true ? $options['order'] : 'asc');
                 }
             }
         }
 
         // add the order to the query builder
-        if ($orderField !== '' && $directionString !== '') {
-            $this->queryBuilder->orderBy($orderField, $directionString);
+        if ($aliasedOrderField !== '' && $directionString !== '') {
+            $this->queryBuilder->orderBy($aliasedOrderField, $directionString);
         }
 
         return array('order' => $orderField, 'direction' => $directionString);

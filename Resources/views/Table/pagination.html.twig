@@ -1,1 +1,5 @@
 {{ 'pagination.count'|transchoice(pagination.total, {'%total%': pagination.total}, translationName) }}
+
+{% for i in 1..pagination.maxPages %}
+<a href="{{ path(routes.list, {'order': ordering.order, 'direction': ordering.direction, 'page': i, 'perPage': pagination.perPage}) }}" title="Page {{ i }}">{{ i }}</a>
+{% endfor %}

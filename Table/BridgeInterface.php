@@ -45,7 +45,7 @@ interface BridgeInterface
      *
      * @param string $order The name of the field to order by
      * @param string $direction Either asc or desc
-     * @return void
+     * @return array
      */
     public function setOrderingChanges($order, $direction);
 
