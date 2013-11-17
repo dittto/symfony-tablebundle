@@ -250,7 +250,7 @@ class HTMLRenderer
             $rowCode .= $this->engine->render($this->rowTemplate, array(
                 'fields' => $fields,
                 'data' => $row,
-                'count' => $count,
+                'count' => $count++,
                 'rowActions' => $rowActionsCode,
                 'routes' => $this->routes,
                 'translationName' => $translationName,

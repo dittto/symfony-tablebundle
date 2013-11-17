@@ -1,4 +1,4 @@
-<tr>
+<tr class="{{ cycle(['odd', 'even'], count) }}">
     {% for field, options in fields %}
         <td>
             {{ attribute(data, options.fieldAlias) }}

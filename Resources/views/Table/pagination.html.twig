@@ -1,5 +1,18 @@
-{{ 'pagination.count'|transchoice(pagination.total, {'%total%': pagination.total}, translationName) }}
+<div class="pagination">
+    <div class="pagination-total">
+        {{ 'pagination.count'|transchoice(pagination.total, {'%total%': pagination.total}, translationName) }}
+    </div>
 
-{% for i in 1..pagination.maxPages %}
-<a href="{{ path(routes.list, {'order': ordering.order, 'direction': ordering.direction, 'page': i, 'perPage': pagination.perPage}) }}" title="Page {{ i }}">{{ i }}</a>
-{% endfor %}
+    <div class="pagination-count">
+        {% spaceless %}
+            <span>Page:</span>
+            {% for i in 1..pagination.maxPages %}
+                {% if pagination.page == i %}
+                    <strong>{{ i }}</strong>
+                {% else %}
+                    <a href="{{ path(routes.list, {'order': ordering.order, 'direction': ordering.direction, 'page': i, 'perPage': pagination.perPage}) }}" title="Page {{ i }}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+        {% endspaceless %}
+    </div>
+</div>

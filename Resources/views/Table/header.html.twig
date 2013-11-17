@@ -12,12 +12,12 @@
     <th>
         {% if options.order != false %}
         <a href="{{ path(routes.list, {'order': field, 'direction': direction, 'page': pagination.page, 'perPage': pagination.perPage}) }}" title="Order by {{ fieldName }}">
-        {% endif %}
+            {% endif %}
             {{ fieldName }}
-        {% if options.order != false %}
+            {% if options.order != false %}
         </a>
         {% endif %}
     </th>
 {% endfor %}
-<th><a href="{{ path(routes.new) }}" title="+ Create"><i class="fa fa-plus"></i> Create</i></a></th>
+<th class="header-actions"><a href="{{ path(routes.new) }}" title="+ Create" class="create"><i class="fa fa-plus"></i> Create</i></a></th>
 </thead>
